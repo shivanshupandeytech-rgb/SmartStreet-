@@ -34,7 +34,7 @@ export default function Streetlights() {
             <div className="flex flex-wrap items-center gap-3 border-b border-white/70 p-3">
               <label className="relative min-w-[12rem] flex-1">
                 <Search size={16} className="absolute left-3 top-2.5 text-gray-500" />
-                <input className="field pl-9" placeholder="Search by ID or area" value={q} onChange={(e) => setQ(e.target.value)} />
+                <input className="field !pl-9" placeholder="Search by ID or area" value={q} onChange={(e) => setQ(e.target.value)} />
               </label>
               <select className="field w-auto" value={f} onChange={(e) => setF(e.target.value)} aria-label="Filter by risk">
                 {FILTERS.map((x) => <option key={x}>{x}</option>)}

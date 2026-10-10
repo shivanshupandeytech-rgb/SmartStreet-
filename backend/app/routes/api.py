@@ -85,3 +85,28 @@ def iot_simulate_tick():
     """Advance the simulator and generate a fresh synthetic sensor snapshot."""
     snapshot = iot_simulator.get_snapshot(refresh=True)
     return {**snapshot, "summary": iot_simulator.summary()}
+
+
+from pydantic import BaseModel
+class SimulationConfig(BaseModel):
+    scenario: str
+    target: str | None = None
+
+@router.post("/iot/simulate/config")
+def iot_simulate_config(config: SimulationConfig):
+    iot_simulator.set_scenario(config.scenario, config.target)
+    return {"scenario": config.scenario, "target": config.target}
+
+
+class SimulationState(BaseModel):
+    active: bool
+
+@router.post("/iot/simulate/state")
+def iot_simulate_state(state: SimulationState):
+    iot_simulator.set_simulation_state(state.active)
+    return {"active": state.active}
+
+
+@router.get("/iot/alerts")
+def iot_alerts():
+    return iot_simulator.get_alerts()

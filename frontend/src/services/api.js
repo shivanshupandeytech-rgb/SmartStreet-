@@ -23,4 +23,7 @@ export const api = {
   iotReadings: () => req('/iot/readings'),
   iotSummary: () => req('/iot/summary'),
   simulateIotTick: () => req('/iot/simulate/tick', { method: 'POST' }),
+  setIotConfig: (body) => req('/iot/simulate/config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }),
+  setIotState: (body) => req('/iot/simulate/state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }),
+  iotAlerts: () => req('/iot/alerts'),
 }

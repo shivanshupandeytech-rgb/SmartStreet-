@@ -1,105 +1,110 @@
-# SmartStreet
+<div align="center">
+  <h1>🌟 SmartStreet 🌟</h1>
+  <p><strong>AI-Powered Streetlight Monitoring and Predictive Maintenance</strong></p>
 
-AI-powered streetlight monitoring and predictive maintenance. Scores every streetlight's chance of failing in the next 30 days, rates it Healthy / Watch / High risk, and builds a prioritised maintenance queue, shown on a dashboard and map.
+  [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+  [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
+  [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+  [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.3-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+</div>
 
-> **All data is synthetic.** Streetlights are generated around Indore for demonstration, with approximate coordinates. The model learns patterns built into the generator, so its accuracy says nothing about real-world performance.
+<br/>
 
-```
-Streetlight data -> feature processing -> Random Forest -> risk rating -> maintenance priority -> dashboard + map
-```
+> **⚠️ Note:** All data is **synthetic**. Streetlights are generated around the city for demonstration purposes with approximate coordinates. The AI model learns patterns built into the generator, so its accuracy says nothing about real-world performance.
 
-## Run locally
+SmartStreet scores every streetlight's chance of failing in the next 30 days, rates it as `Healthy`, `Watch`, or `High Risk`, and dynamically builds a prioritized maintenance queue shown on a beautiful real-time dashboard and interactive map.
 
-Requires Python 3.10+ and Node 18+.
+---
 
-**1. Backend**
+## ✨ Key Features
+
+| Page | Purpose |
+|---|---|
+| 📊 **Dashboard** | Live counts, real-time map, and the "Fix First" priority queue. |
+| 💡 **Streetlights** | Searchable, sortable datatable with an expandable detail panel. |
+| 🗺️ **Interactive Map** | Filter by rating, click a pole for detailed analytics. (Supports Google Maps & Leaflet). |
+| 🔮 **Predictions** | View highest-risk working lights and test assumptions with a What-If scenario tool. |
+| 🛠️ **Maintenance** | Prioritized queue. "Mark serviced" automatically updates the data and re-scores the pole. |
+| 📈 **Analytics** | Deep-dive condition by area, risk by age, and Random Forest feature importance. |
+| 📡 **IoT Monitor** | Live simulated telemetry for voltage, current, temperature, and lamp lux with an interactive Control Panel. |
+
+---
+
+## 🚀 Getting Started
+
+Requires **Python 3.10+** and **Node 18+**.
+
+### 1. Backend Setup
 ```bash
+# Clone and enter the directory
 cd smartstreet
-python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
+
+# Setup virtual environment
+python -m venv .venv
+source .venv/bin/activate      # Windows: .venv\Scripts\activate
+
+# Install dependencies
 pip install -r backend/requirements.txt
-python ml/generate_data.py      # optional: regenerates the synthetic data (a copy is included)
-python ml/train_model.py        # trains and saves the model (also happens automatically on first request)
+
+# (Optional) Regenerate synthetic data
+python ml/generate_data.py      
+
+# Train and save the Random Forest model
+python ml/train_model.py        
+
+# Start FastAPI server
 cd backend && uvicorn app.main:app --reload --port 8000
 ```
-API docs: http://localhost:8000/docs
+> **API Docs:** http://localhost:8000/docs
 
-**2. Frontend**
+### 2. Frontend Setup
 ```bash
 cd frontend
-cp .env.example .env            # optional: add VITE_GOOGLE_MAPS_API_KEY
+
+# Set up environment variables
+cp .env.example .env            # Add VITE_GOOGLE_MAPS_API_KEY if available
+
+# Install packages and start Vite dev server
 npm install
 npm run dev
 ```
-Open http://localhost:5173
+> **Open the App:** http://localhost:5173
 
-## Map
-With `VITE_GOOGLE_MAPS_API_KEY` set, the app uses Google Maps. With no key, or if Google rejects it, it falls back automatically to a Leaflet map on Carto/OpenStreetMap tiles, so the map always works.
+---
 
-## What each part does
-| Page | Purpose |
-|---|---|
-| Dashboard | Live counts, map, and the "Fix first" list |
-| Streetlights | Searchable, sortable table with a detail panel |
-| Map | Filter by rating, click a pole for details |
-| Predictions | Highest-risk working lights, plus a scenario tool |
-| Maintenance | Prioritised queue. "Mark serviced" updates the data and re-scores the pole |
-| Analytics | Condition by area, risk by age, model feature importance |
+## 🗺️ Mapping System
+With `VITE_GOOGLE_MAPS_API_KEY` set, the app uses Google Maps. If omitted or rejected, it gracefully falls back to a **Leaflet** map on Carto/OpenStreetMap tiles—ensuring the map always works out-of-the-box.
 
-Dashboard numbers come from `GET /api/stats` and are never hardcoded.
+---
 
-## Rating rules
-Failure probability: below 25% Healthy, 25-50% Watch, 50% and above High risk. A light reported failed is an Outage and ranks above everything else in the queue.
+## 🧠 AI Rating & IoT Simulation
 
-## Photo check (optional CV module)
-`POST /api/vision/analyze` runs an OpenCV brightness check on an uploaded photo and says whether a lamp looks lit. It is a heuristic, not a trained detector. If OpenCV is missing, only this feature is disabled. `backend/app/services/vision.py` is the place to swap in YOLO later.
+### Machine Learning Rules
+- **Healthy:** Failure probability < 25%
+- **Watch:** Failure probability 25% - 50%
+- **High Risk:** Failure probability > 50%
+- *Any light actively reported as failed is instantly escalated to an **Outage** and prioritized.*
 
-## Deploy
-- **Backend (Render):** `render.yaml` is included. Set `CORS_ORIGINS` to your Vercel URL.
-- **Frontend (Vercel):** root directory `frontend`, set `VITE_API_URL` to your Render URL. `vercel.json` handles page routing.
-- Render's free tier resets files on restart, so "Mark serviced" changes will reset. Use a database for persistence.
+### Simulated IoT Sensor Monitor
+The app includes a dedicated simulation page at `/iot` generating synthetic readings (current, voltage, lux, temperature). 
 
-## Using real data
-Replace `backend/data/streetlights.json` with real records (same fields) and retrain `ml/train_model.py` on real failure logs. MongoDB is not wired in: `backend/app/database/repository.py` is the only file to replace.
+- **Control Panel:** Trigger specific fault scenarios (e.g., Abnormal Voltage, Overheating, Lamp Failure).
+- **Fault Detection:** Automatically flags issues based on configurable thresholds.
+- **Deduplicated Alerts:** Real-time logging of critical events with severity ratings.
 
-## Layout
-```
-backend/app   FastAPI app (routes, services, database, models)
-backend/data  streetlights.json (synthetic)
-ml/           data generator, training, prediction, shared features
-frontend/src  React app (pages, components, services, hooks, utils)
+---
+
+## 📁 Repository Layout
+```text
+📦 smartstreet
+ ┣ 📂 backend/app   # FastAPI app (routes, services, DB, models)
+ ┣ 📂 backend/data  # streetlights.json (synthetic records)
+ ┣ 📂 ml/           # Data generator, training, prediction, RF features
+ ┗ 📂 frontend/src  # React app (glassmorphism UI, components, hooks, api)
 ```
 
-## Simulated IoT Sensor Monitor
+---
 
-SmartStreet includes a simulation-only IoT telemetry page at `/iot`. It generates synthetic current, voltage, lamp-output lux, and temperature readings for each streetlight. The simulator is for demos and does not connect to physical hardware or change the underlying streetlight records.
-
-### IoT API endpoints
-
-- `GET /api/iot/readings` — latest simulated sensor snapshot.
-- `GET /api/iot/summary` — counts of simulated devices and detected faults.
-- `POST /api/iot/simulate/tick` — generate the next simulated snapshot.
-
-The demo flags a sensor fault when current is below `0.05 A` or lamp output is below `10 lux` while the lamp is commanded on. These are illustrative thresholds only; calibrate them against actual hardware before field use.
-
-### Run locally
-
-Terminal 1 (backend, from the repository root):
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r backend/requirements.txt
-python ml/train_model.py
-cd backend
-uvicorn app.main:app --reload --port 8000
-```
-
-Terminal 2 (frontend, from the repository root):
-
-```bash
-cd frontend
-npm ci
-npm run dev
-```
-
-Open `http://localhost:5173/iot`. All readings are labelled as simulated. Existing dashboard, map, predictions, analytics, and maintenance features are retained.
+<div align="center">
+  <i>Built with ❤️ for a Smarter Future.</i>
+</div>
