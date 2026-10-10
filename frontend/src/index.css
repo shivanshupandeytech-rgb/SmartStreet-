@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: linear-gradient(160deg, #F4F6F8 0%, #E6ECF3 100%) fixed;
+  color: #111827;
+  font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.glass {
+  background: rgba(255, 255, 255, 0.64);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 1px 2px rgba(17, 24, 39, 0.05), 0 8px 24px rgba(17, 24, 39, 0.08);
+}
+.btn { @apply inline-flex items-center justify-center gap-2 rounded-lg bg-cobalt px-3.5 py-2 text-sm font-medium text-white transition hover:bg-[#003a8c] disabled:opacity-50; }
+.btn-quiet { @apply inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white/70 px-3.5 py-2 text-sm font-medium text-ink transition hover:bg-white; }
+.field { @apply w-full rounded-lg border border-gray-300 bg-white/80 px-3 py-2 text-sm text-ink; }
+.leaflet-container { background: #E6EBF0; font-family: inherit; }
+:focus-visible { outline: 2px solid #0047AB; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

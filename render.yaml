@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: smartstreet-api
+    runtime: python
+    buildCommand: pip install -r backend/requirements.txt && python ml/train_model.py
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: CORS_ORIGINS
+        value: https://YOUR-APP.vercel.app
