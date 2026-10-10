@@ -22,54 +22,95 @@ export default function Streetlights() {
     if (q) r = r.filter((x) => (x.id + x.location).toLowerCase().includes(q.toLowerCase()))
     return [...r].sort((a, b) => (sort === 'id' ? a.id.localeCompare(b.id) : b[sort] - a[sort]))
   }, [res.data, q, f, sort])
+
   const sel = res.data?.find((l) => l.id === selId)
 
   return (
     <div className="mx-auto max-w-7xl p-4 sm:p-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Streetlights</h1>
-      <p className="mb-4 text-sm text-gray-600">Every pole with its current condition and predicted failure risk.</p>
+      {/* Page header */}
+      <div className="pg-header">
+        <h1 className="text-xl font-semibold text-cobalt">Streetlight Registry</h1>
+        <p className="mt-0.5 text-sm text-gray-500">Complete inventory of all poles with current condition and predicted failure risk.</p>
+      </div>
+
       <ApiState {...res}>
         <div className="grid gap-4 xl:grid-cols-[1fr_22rem]">
-          <section className="glass overflow-hidden rounded-2xl">
-            <div className="flex flex-wrap items-center gap-3 border-b border-white/70 p-3">
-              <label className="relative min-w-[12rem] flex-1">
-                <Search size={16} className="absolute left-3 top-2.5 text-gray-500" />
-                <input className="field !pl-9" placeholder="Search by ID or area" value={q} onChange={(e) => setQ(e.target.value)} />
+          <section className="overflow-hidden rounded border border-gray-200 bg-white shadow-sm">
+            {/* Toolbar */}
+            <div className="flex flex-wrap items-center gap-2 border-b border-gray-200 bg-[#F8F9FB] px-3 py-2.5">
+              <label className="relative flex-1 min-w-[10rem]">
+                <Search size={15} className="absolute left-2.5 top-2.5 text-gray-400 pointer-events-none" />
+                <input
+                  className="field !pl-8"
+                  placeholder="Search by ID or area"
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
+                  id="streetlight-search"
+                />
               </label>
               <select className="field w-auto" value={f} onChange={(e) => setF(e.target.value)} aria-label="Filter by risk">
                 {FILTERS.map((x) => <option key={x}>{x}</option>)}
               </select>
               <select className="field w-auto" value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Sort by">
-                <option value="priority_score">Sort: priority</option>
-                <option value="failure_probability">Sort: failure risk</option>
-                <option value="age_years">Sort: age</option>
-                <option value="days_since_maintenance">Sort: days since service</option>
+                <option value="priority_score">Sort: Priority</option>
+                <option value="failure_probability">Sort: Failure risk</option>
+                <option value="age_years">Sort: Age</option>
+                <option value="days_since_maintenance">Sort: Days since service</option>
                 <option value="id">Sort: ID</option>
               </select>
             </div>
+
+            {/* Table */}
             <div className="max-h-[70vh] overflow-auto">
               <table className="w-full text-left text-sm">
-                <thead className="sticky top-0 bg-white/80 text-xs text-gray-600 backdrop-blur">
-                  <tr><th className="px-4 py-2">ID</th><th>Area</th><th>Status</th><th className="text-right">Risk</th><th className="text-right">Age</th><th className="px-4 text-right">Since service</th></tr>
+                <thead className="sticky top-0 bg-[#F8F9FB] text-xs text-gray-500 border-b border-gray-200">
+                  <tr>
+                    <th className="px-4 py-2.5 font-semibold">ID</th>
+                    <th className="py-2.5 font-semibold">Area</th>
+                    <th className="py-2.5 font-semibold">Status</th>
+                    <th className="py-2.5 pr-4 text-right font-semibold">Risk</th>
+                    <th className="py-2.5 text-right font-semibold">Age</th>
+                    <th className="py-2.5 px-4 text-right font-semibold">Since service</th>
+                  </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-gray-100">
                   {rows.map((l) => (
-                    <tr key={l.id} onClick={() => setSelId(l.id)} className={`cursor-pointer border-t border-white/60 hover:bg-white/60 ${l.id === selId ? 'bg-white/70' : ''}`}>
-                      <td className="px-4 py-2 font-medium">{l.id}</td>
-                      <td>{l.location.split(',')[0]}</td>
-                      <td><RiskBadge level={l.risk_level} /></td>
-                      <td className="text-right tabular-nums">{pct(l.failure_probability)}</td>
-                      <td className="text-right tabular-nums">{l.age_years} y</td>
-                      <td className="px-4 text-right tabular-nums">{l.days_since_maintenance} d</td>
+                    <tr
+                      key={l.id}
+                      onClick={() => setSelId(l.id)}
+                      className={`cursor-pointer hover:bg-[#F2F4F7] transition-colors ${l.id === selId ? 'bg-[#EBF0F7]' : ''}`}
+                    >
+                      <td className="px-4 py-2.5 font-medium text-cobalt">{l.id}</td>
+                      <td className="py-2.5 text-gray-700">{l.location.split(',')[0]}</td>
+                      <td className="py-2.5"><RiskBadge level={l.risk_level} /></td>
+                      <td className="py-2.5 pr-4 text-right tabular-nums text-gray-700">{pct(l.failure_probability)}</td>
+                      <td className="py-2.5 text-right tabular-nums text-gray-700">{l.age_years} y</td>
+                      <td className="px-4 py-2.5 text-right tabular-nums text-gray-700">{l.days_since_maintenance} d</td>
                     </tr>
                   ))}
-                  {!rows.length && <tr><td colSpan={6} className="p-8 text-center text-gray-600">No streetlights match these filters.</td></tr>}
+                  {!rows.length && (
+                    <tr><td colSpan={6} className="p-8 text-center text-sm text-gray-500">No streetlights match these filters.</td></tr>
+                  )}
                 </tbody>
               </table>
             </div>
-            <div className="border-t border-white/70 px-4 py-2 text-xs text-gray-600">{rows.length} of {res.data?.length} streetlights</div>
+            <div className="border-t border-gray-200 bg-[#F8F9FB] px-4 py-2 text-xs text-gray-500">
+              Showing {rows.length} of {res.data?.length} streetlights
+            </div>
           </section>
-          <div>{sel ? <LightCard light={sel} onClose={() => setSelId(null)} onChanged={res.reload} /> : <div className="glass rounded-2xl p-6 text-sm text-gray-600">Select a streetlight to see its readings and why it is rated this way.</div>}</div>
+
+          {/* Detail panel */}
+          <div>
+            {sel
+              ? <LightCard light={sel} onClose={() => setSelId(null)} onChanged={res.reload} />
+              : (
+                <div className="rounded border border-gray-200 bg-white p-6 text-sm text-gray-500 shadow-sm">
+                  <p className="font-medium text-gray-700 mb-1">No streetlight selected</p>
+                  <p>Click any row in the table to view its readings and risk assessment.</p>
+                </div>
+              )
+            }
+          </div>
         </div>
       </ApiState>
     </div>

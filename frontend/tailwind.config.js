@@ -2,8 +2,20 @@ export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
-      colors: { ink: '#111827', canvas: '#F4F6F8', ok: '#166534', bad: '#991B1B', cobalt: '#0047AB', watch: '#A16207', high: '#C2410C' },
-      fontFamily: { sans: ['"SF Pro Display"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'system-ui', 'sans-serif'] },
+      colors: {
+        ink: '#111827',
+        canvas: '#F2F4F7',
+        ok: '#2e7d32',
+        bad: '#b71c1c',
+        cobalt: '#17365D',
+        navy: '#285A8E',
+        muted: '#E8ECF1',
+        watch: '#b45309',
+        high: '#9a3412',
+      },
+      fontFamily: {
+        sans: ['"Inter"', '"Noto Sans"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'system-ui', 'sans-serif'],
+      },
     },
   },
   plugins: [],
