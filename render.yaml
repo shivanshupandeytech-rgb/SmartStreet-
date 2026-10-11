@@ -6,4 +6,4 @@ services:
     startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: CORS_ORIGINS
-        value: https://YOUR-APP.vercel.app
+        value: https://smartstreet-frontend-taupe.vercel.app
